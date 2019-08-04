@@ -21,7 +21,7 @@ import (
 	"github.com/hanwen/go-fuse/fuse/pathfs"
 	"github.com/sebastianhaberey/adbfs/internal/cli"
 	. "github.com/sebastianhaberey/adbfs/internal/util"
-	fs "github.com/zach-klippenstein/adbfs"
+	fs "github.com/sebastianhaberey/adbfs"
 	"github.com/zach-klippenstein/goadb"
 )
 
