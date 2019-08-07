@@ -19,9 +19,9 @@ import (
 	"github.com/hanwen/go-fuse/fuse"
 	"github.com/hanwen/go-fuse/fuse/nodefs"
 	"github.com/hanwen/go-fuse/fuse/pathfs"
+	fs "github.com/sebastianhaberey/adbfs"
 	"github.com/sebastianhaberey/adbfs/internal/cli"
 	. "github.com/sebastianhaberey/adbfs/internal/util"
-	fs "github.com/sebastianhaberey/adbfs"
 	"github.com/zach-klippenstein/goadb"
 )
 
@@ -208,13 +208,14 @@ func handleDeviceDisconnected() {
 }
 
 func checkValidMountpoint(path string) error {
-	info, err := os.Stat(path)
+
+	result, err := fs.IsDirectory(path)
 	if err != nil {
 		return err
 	}
 
-	if !info.IsDir() {
-		return errors.New(fmt.Sprint("path is not a directory:", path))
+	if !result {
+		return errors.New(fmt.Sprint("path is not a directory: ", path))
 	}
 
 	return nil

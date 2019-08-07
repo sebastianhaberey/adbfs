@@ -3,6 +3,10 @@ package adbfs
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
+	"log"
+	"os"
+	"path"
 	"testing"
 
 	"github.com/Sirupsen/logrus"
@@ -78,3 +82,73 @@ func TestLoggingFile(t *testing.T) {
 	assert.Equal(t, "[42]", output["args"])
 	assert.NotEmpty(t, output["time"])
 }
+
+func TestIsDirectory_Directory(t *testing.T) {
+	tempDir, err := ioutil.TempDir("", "test")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	fooDir := path.Join(tempDir, "foo")
+
+	err = os.Mkdir(fooDir, 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	isDirectory, err := IsDirectory(fooDir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	assert.True(t, isDirectory)
+}
+
+func TestIsDirectory_DirectoryWithDifferentCase(t *testing.T) {
+	tempDir, err := ioutil.TempDir("", "test")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	fooDir := path.Join(tempDir, "foo")
+
+	err = os.Mkdir(fooDir, 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	barDir := path.Join(tempDir, "Foo")
+
+	isDirectory, err := IsDirectory(barDir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	assert.False(t, isDirectory)
+}
+
+func TestIsDirectory_File(t *testing.T) {
+	tempDir, err := ioutil.TempDir("", "test")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	fooFile := path.Join(tempDir, "foo")
+
+	file, err := os.Create(fooFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	file.Close()
+
+	isDirectory, err := IsDirectory(fooFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	assert.False(t, isDirectory)
+}
+

@@ -3,7 +3,9 @@ package adbfs
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
+	path "path"
 
 	"github.com/hanwen/go-fuse/fuse"
 	"github.com/hanwen/go-fuse/fuse/nodefs"
@@ -103,4 +105,26 @@ func summarizeForLog(vals []interface{}) {
 			vals[i] = fmt.Sprintf("fuse.ReadResult(%d)", val.Size())
 		}
 	}
+}
+
+// Tests if the specified path is a directory.
+// This function is case sensitive unlike File.Stat() for example.
+func IsDirectory(thePath string) (result bool, err error) {
+
+	dir := path.Dir(thePath)
+
+	entries, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return false, err
+	}
+
+	base := path.Base(thePath)
+
+	for _, fileInfo := range entries {
+		if fileInfo.IsDir() && fileInfo.Name() == base {
+			return true, nil
+		}
+	}
+
+	return false, nil;
 }
