@@ -354,6 +354,7 @@ func readLink(client DeviceClient, path string) (string, error) {
 		return "", err
 	}
 	result = strings.TrimSuffix(result, "\r\n")
+	result = strings.TrimSuffix(result, "\n")
 
 	if result == ReadlinkInvalidArgument {
 		return "", ErrNotALink
